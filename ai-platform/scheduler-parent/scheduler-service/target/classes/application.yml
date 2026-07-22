@@ -1,0 +1,41 @@
+server:
+  port: 8084 # scheduler-service will run on a different port
+
+spring:
+  application:
+    name: scheduler-service
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/task_scheduler?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 1 # Using database 1 for scheduler-service
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    com.travlejava.taskscheduler: debug
+
+zookeeper:
+  connect-string: localhost:2181 # Default Zookeeper connection string
+  session-timeout-ms: 60000
+  connection-timeout-ms: 15000

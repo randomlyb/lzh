@@ -1,0 +1,46 @@
+server:
+  port: 8083 # ai-service will run on a different port than auth-service (8082)
+
+spring:
+  application:
+    name: ai-service
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ai_knowledge_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0 # Using database 0 for ai-service
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  elasticsearch:
+    uris: http://localhost:9200 # Default Elasticsearch host and port
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    com.travlejava.ai: debug
+
+deepseek:
+  api-key: YOUR_DEEPSEEK_API_KEY # Replace with your actual DeepSeek API key
+  base-url: https://api.deepseek.com/v1 # Default DeepSeek API base URL
+
+app:
+  upload-dir: /tmp/ai-platform-uploads # Directory for uploaded files

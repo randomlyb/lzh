@@ -1,0 +1,9 @@
+com\travlejava\taskscheduler\common\entity\Job.class
+com\travlejava\taskscheduler\common\dto\ExecuteRequest.class
+com\travlejava\taskscheduler\common\model\TaskExecuteParam.class
+com\travlejava\taskscheduler\common\enums\TriggerType.class
+com\travlejava\taskscheduler\common\enums\JobStatus.class
+com\travlejava\taskscheduler\common\entity\JobLog.class
+com\travlejava\taskscheduler\common\enums\LogStatus.class
+com\travlejava\taskscheduler\common\model\Result.class
+com\travlejava\taskscheduler\common\enums\RouteStrategy.class
