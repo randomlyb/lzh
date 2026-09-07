@@ -25,7 +25,7 @@ public class DeepSeekGenerationService {
 
         DeepSeekChatRequest request = new DeepSeekChatRequest(
                 List.of(new Message("user", prompt)),
-                "deepseek-chat", // Or your preferred DeepSeek model
+                "qwen-plus", // Qwen model
                 0.7, // Temperature for creativity
                 1024, // Max tokens for response
                 false // Not streaming
@@ -33,6 +33,13 @@ public class DeepSeekGenerationService {
 
         return deepSeekClient.chatCompletion(request)
                 .map(response -> response.getChoices().get(0).getMessage().getContent());
+    }
+
+    /**
+     * 同步版本的生成方法 - 用于熔断器场景
+     */
+    public String generateAnswerSync(String userQuestion, List<DocumentChunk> retrievedChunks) {
+        return generateAnswer(userQuestion, retrievedChunks).block();
     }
 
     private String buildPrompt(String userQuestion, List<DocumentChunk> chunks) {

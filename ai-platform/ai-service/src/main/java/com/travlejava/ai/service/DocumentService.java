@@ -1,8 +1,9 @@
 package com.travlejava.ai.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.travlejava.ai.pojo.document.dto.DocumentResponse;
-import com.travlejava.ai.pojo.entity.document.DocumentMetadata;
+import com.travlejava.ai.pojo.document.entity.DocumentMetadata;
 import com.travlejava.ai.service.mapper.DocumentMapper;
 import com.travlejava.ai.service.mq.DocumentEventProducer;
 import com.travlejava.taskscheduler.common.mq.DocumentParseMessage;
@@ -15,7 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentService extends ServiceImpl<DocumentMapper, DocumentMetadata> {
@@ -57,11 +60,28 @@ public class DocumentService extends ServiceImpl<DocumentMapper, DocumentMetadat
         DocumentParseMessage message = new DocumentParseMessage(
                 metadata.getId(),
                 metadata.getFilePath(),
-                metadata.getFileType()
+                metadata.getFileType(),
+                metadata.getTitle(),
+                metadata.getDescription(),
+                metadata.getKnowledgeBaseId(),
+                metadata.getUploadTime()
         );
         documentEventProducer.sendDocumentParseMessage(message);
 
         return DocumentResponse.fromDocumentMetadata(metadata);
+    }
+
+    public List<DocumentResponse> getAllDocuments(Long knowledgeBaseId) {
+        List<DocumentMetadata> metadataList;
+        if (knowledgeBaseId != null) {
+            metadataList = list(new LambdaQueryWrapper<DocumentMetadata>()
+                    .eq(DocumentMetadata::getKnowledgeBaseId, knowledgeBaseId));
+        } else {
+            metadataList = list();
+        }
+        return metadataList.stream()
+                .map(DocumentResponse::fromDocumentMetadata)
+                .collect(Collectors.toList());
     }
 
     public DocumentResponse getDocumentById(Long id) {

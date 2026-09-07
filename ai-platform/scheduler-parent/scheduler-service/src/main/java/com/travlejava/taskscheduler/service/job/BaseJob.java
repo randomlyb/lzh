@@ -14,6 +14,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
@@ -24,16 +25,16 @@ public class BaseJob extends QuartzJobBean {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseJob.class);
 
-    private final ApplicationContext applicationContext;
-    private final ExecutorRouteService executorRouteService;
-    private final JobService jobService;
-    private final JobLogService jobLogService;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private ExecutorRouteService executorRouteService;
+    @Autowired
+    private JobService jobService;
+    @Autowired
+    private JobLogService jobLogService;
 
-    public BaseJob(ApplicationContext applicationContext, ExecutorRouteService executorRouteService, JobService jobService, JobLogService jobLogService) {
-        this.applicationContext = applicationContext;
-        this.executorRouteService = executorRouteService;
-        this.jobService = jobService;
-        this.jobLogService = jobLogService;
+    public BaseJob() {
     }
 
     @Override

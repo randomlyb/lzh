@@ -58,7 +58,7 @@ public class KnowledgeBaseController {
 
     @DeleteMapping("/{knowledgeBaseId}/documents/{documentId}")
     public ResponseEntity<Void> removeDocumentFromKnowledgeBase(@PathVariable Long knowledgeBaseId, @PathVariable Long documentId) {
-        boolean success = knowledgeBaseService.removeDocumentFromKnowledgeBase(knowledgeBaseId, documentId);
-        return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        knowledgeBaseService.removeDocumentFromKnowledgeBase(knowledgeBaseId, documentId);
+        return ResponseEntity.noContent().build();
     }
 }

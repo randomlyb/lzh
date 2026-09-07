@@ -15,39 +15,18 @@ import java.time.LocalDateTime;
 @TableName("ai_knowledge_base")
 public class KnowledgeBase {
     
-    /**
-     * 主键ID，自动生成
-     */
     @TableId(type = IdType.AUTO)
     private Long id;
     
-    /**
-     * 知识库名称，不能为空
-     */
     private String name;
     
-    /**
-     * 知识库描述，说明知识库的用途和内容范围
-     */
     private String description;
     
-    /**
-     * 所有者ID，标识创建该知识库的用户
-     */
     private Long ownerId;
     
-    /**
-     * 知识库状态：0-禁用，1-启用
-     */
     private Integer status;
     
-    /**
-     * 创建时间，记录知识库何时创建
-     */
     private LocalDateTime createTime;
     
-    /**
-     * 更新时间，记录知识库最后更新时间
-     */
     private LocalDateTime updateTime;
 }

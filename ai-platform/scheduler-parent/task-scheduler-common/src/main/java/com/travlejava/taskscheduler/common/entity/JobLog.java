@@ -20,4 +20,5 @@ public class JobLog {
     private LogStatus status;
     private String errorMessage;
     private Integer retryCount;
+    private LocalDateTime createTime;
 }

@@ -1,0 +1,160 @@
+services:
+  # 注意: MySQL使用本地数据库，不在Docker中运行
+  # 本地MySQL连接地址: host.docker.internal:3306
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    # 端口不对外暴露,仅内部网络访问
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - trae-ai-network
+
+  redis:
+    image: redis:6-alpine
+    hostname: redis
+    # 端口不对外暴露,仅内部网络访问
+    volumes:
+      - redis_data:/data
+    networks:
+      - trae-ai-network
+
+  elasticsearch:
+    image: elasticsearch:8.13.4
+    hostname: elasticsearch
+    # 端口不对外暴露,仅内部网络访问
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - trae-ai-network
+
+  zookeeper:
+    image: zookeeper:3.8
+    hostname: zookeeper
+    # 端口不对外暴露,仅内部网络访问
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zk_data:/data
+      - zk_datalog:/datalog
+    networks:
+      - trae-ai-network
+
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    hostname: nacos
+    # 端口不对外暴露,仅内部网络访问
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: host.docker.internal
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: ${DB_PASSWORD:-1234}
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    volumes:
+      - nacos_data:/home/nacos/data
+      - nacos_logs:/home/nacos/logs
+    networks:
+      - trae-ai-network
+
+  ai-auth-service:
+    build:
+      context: ./ai-auth-service
+      dockerfile: Dockerfile
+    hostname: ai-auth-service
+    # 端口不对外暴露,通过Nginx反向代理访问
+    environment:
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=host.docker.internal
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
+      - REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET:-ASecretKeyForJWTThatIsLongEnoughToEnsureSecurityAndShouldBeStoredInEnvironmentVariables}
+    depends_on:
+      - redis
+      - nacos
+    networks:
+      - trae-ai-network
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    hostname: ai-service
+    # 端口不对外暴露,通过Nginx反向代理访问
+    environment:
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=host.docker.internal
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+      - ES_URLS=http://elasticsearch:9200
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+    depends_on:
+      - redis
+      - rabbitmq
+      - elasticsearch
+      - nacos
+    networks:
+      - trae-ai-network
+
+  scheduler-service:
+    build:
+      context: ./scheduler-parent/scheduler-service
+      dockerfile: Dockerfile
+    hostname: scheduler-service
+    # 端口不对外暴露,通过Nginx反向代理访问
+    environment:
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=host.docker.internal
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+      - ZK_CONNECT_STRING=zookeeper:2181
+    depends_on:
+      - redis
+      - rabbitmq
+      - zookeeper
+      - nacos
+    networks:
+      - trae-ai-network
+
+  nginx:
+    image: nginx:alpine
+    hostname: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ai-frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - ai-auth-service
+      - ai-service
+      - scheduler-service
+    networks:
+      - trae-ai-network
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+  es_data:
+  zk_data:
+  zk_datalog:
+  nacos_data:
+  nacos_logs:
+
+networks:
+  trae-ai-network:
+    driver: bridge

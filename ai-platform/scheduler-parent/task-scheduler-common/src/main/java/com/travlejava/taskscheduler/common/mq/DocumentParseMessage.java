@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +14,9 @@ public class DocumentParseMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long documentId;
     private String documentPath;
-    private String fileType; // e.g., PDF, DOCX, TXT
-    // Other relevant metadata for parsing
+    private String fileType;
+    private String title;
+    private String description;
+    private Long knowledgeBaseId;
+    private LocalDateTime uploadTime;
 }

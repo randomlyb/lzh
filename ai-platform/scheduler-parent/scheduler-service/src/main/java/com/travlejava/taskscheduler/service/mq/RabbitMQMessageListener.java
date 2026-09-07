@@ -24,14 +24,26 @@ public class RabbitMQMessageListener {
     @RabbitListener(queues = RabbitMQConfig.DOCUMENT_PARSE_QUEUE)
     public void handleDocumentParseMessage(DocumentParseMessage message) {
         logger.info("Received document parse message: {}", message);
-        // Here, we create a new job to parse the document.
-        // In a real scenario, you might have pre-defined job templates.
+        // Create a new job to parse the document
         JobCreateRequest jobCreateRequest = new JobCreateRequest();
         jobCreateRequest.setJobName("Document Parse Job for DocId: " + message.getDocumentId());
-        jobCreateRequest.setExecutorHandler("pdfParseJobExecutor"); // The bean name of our executor
-        jobCreateRequest.setExecutorParams(message.getDocumentPath()); // Pass document path as param
-        jobCreateRequest.setTriggerType(TriggerType.FIXED_RATE); // Trigger immediately
-        jobCreateRequest.setFixedRate(1000L); // Execute once after 1 second (or a very short interval then unschedule)
+        jobCreateRequest.setExecutorHandler("pdfParseJobExecutor");
+        
+        // Build JSON params with all metadata - escape backslashes for Windows paths
+        String escapedPath = message.getDocumentPath().replace("\\", "\\\\");
+        String executorParams = String.format(
+                "{\"documentId\":%d,\"filePath\":\"%s\",\"title\":\"%s\",\"fileType\":\"%s\",\"description\":\"%s\",\"knowledgeBaseId\":%s,\"uploadTime\":\"%s\"}", 
+                message.getDocumentId(), 
+                escapedPath,
+                message.getTitle() != null ? message.getTitle().replace("\"", "\\\"") : "",
+                message.getFileType() != null ? message.getFileType() : "",
+                message.getDescription() != null ? message.getDescription().replace("\"", "\\\"") : "",
+                message.getKnowledgeBaseId() != null ? message.getKnowledgeBaseId() : "null",
+                message.getUploadTime() != null ? message.getUploadTime() : ""
+        );
+        jobCreateRequest.setExecutorParams(executorParams);
+        jobCreateRequest.setTriggerType(TriggerType.FIXED_RATE);
+        jobCreateRequest.setFixedRate(1000L);
         jobCreateRequest.setMaxRetryCount(3);
 
         try {

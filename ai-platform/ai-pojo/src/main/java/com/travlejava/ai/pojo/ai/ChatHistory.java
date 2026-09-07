@@ -19,9 +19,9 @@ public class ChatHistory {
     private Long id;
     
     /**
-     * 用户ID，标识发起对话的用户
+     * 用户ID，标识发起对话的用户（支持数字ID和用户名）
      */
-    private Long userId;
+    private String userId;
     
     /**
      * 用户的问题文    */

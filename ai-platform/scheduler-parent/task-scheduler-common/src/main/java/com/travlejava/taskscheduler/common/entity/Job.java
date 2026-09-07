@@ -24,7 +24,7 @@ public class Job {
     private Integer maxRetryCount = 3;
     private Long retryDelay = 5000L;
     private Integer maxConcurrent = 1;
-    private JobStatus status;
+    private String status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

@@ -1,0 +1,94 @@
+# 开发环境配置 - 只跑基础设施
+# 使用方法：docker-compose -f docker-compose-dev.yml up -d
+
+services:
+  mysql:
+    image: mysql:8.0
+    hostname: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: ai_knowledge_platform,task_scheduler
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - dev-network
+
+  redis:
+    image: redis:6-alpine
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - dev-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - dev-network
+
+  elasticsearch:
+    image: elasticsearch:8.13.4
+    hostname: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - dev-network
+
+  zookeeper:
+    image: zookeeper:3.8.4
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/data
+    networks:
+      - dev-network
+
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    hostname: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      - MODE=standalone
+      - JVM_XMS=256m
+      - JVM_XMX=256m
+      - JVM_XMN=128m
+    volumes:
+      - nacos_data:/home/nacos/data
+    networks:
+      - dev-network
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+  es_data:
+  zookeeper_data:
+  nacos_data:
+
+networks:
+  dev-network:
+    driver: bridge

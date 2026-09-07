@@ -47,27 +47,23 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+        Claims claims = Jwts.parser()
+                .verifyWith((javax.crypto.SecretKey) key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.getSubject();
     }
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
+            Jwts.parser().verifyWith((javax.crypto.SecretKey) key).build().parseSignedClaims(authToken);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException ex) {
-            // log error "Invalid JWT signature"
         } catch (ExpiredJwtException ex) {
-            // log error "Expired JWT token"
         } catch (UnsupportedJwtException ex) {
-            // log error "Unsupported JWT token"
         } catch (IllegalArgumentException ex) {
-            // log error "JWT claims string is empty"
         }
         return false;
     }

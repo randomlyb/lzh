@@ -1,0 +1,1 @@
+import{r as n}from"./request-DkOkBHmq.js";function a(){return n.get("/api/knowledge-bases")}function o(e){return n.post("/api/knowledge-bases",e)}function r(e,s){return n.put(`/api/knowledge-bases/${e}`,s)}function d(e){return n.delete(`/api/knowledge-bases/${e}`)}function u(e,s){return n.delete(`/api/knowledge-bases/${e}/documents/${s}`)}export{o as c,d,a as g,u as r,r as u};

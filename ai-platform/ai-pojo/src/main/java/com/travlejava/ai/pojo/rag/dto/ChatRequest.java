@@ -8,6 +8,6 @@ import java.io.Serializable;
 public class ChatRequest implements Serializable {
     private static final long serialVersionUID = 1L;
     private String question;
-    private Long userId; // Assuming user context is needed
+    private String userId; // 支持数字ID和用户名
     private String conversationId; // Optional, for continuing conversations
 }

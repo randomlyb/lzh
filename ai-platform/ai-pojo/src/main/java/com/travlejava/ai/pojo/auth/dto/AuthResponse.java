@@ -11,6 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AuthResponse implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Integer code;
+    private String message;
     private String token;
     private String refreshToken; // Optional: for refresh token mechanism
     private Long userId;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -31,6 +32,13 @@ public class DocumentController {
         } catch (IOException e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DocumentResponse>> getAllDocuments(
+            @RequestParam(value = "knowledgeBaseId", required = false) Long knowledgeBaseId) {
+        List<DocumentResponse> documents = documentService.getAllDocuments(knowledgeBaseId);
+        return ResponseEntity.ok(documents);
     }
 
     @GetMapping("/{id}")

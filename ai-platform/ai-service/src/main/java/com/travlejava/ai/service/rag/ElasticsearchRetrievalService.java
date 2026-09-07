@@ -19,9 +19,10 @@ import java.util.Map;
 @Service
 public class ElasticsearchRetrievalService {
 
-    private static final String DOCUMENT_CHUNK_INDEX = "document_chunks"; // Assuming an index name
+    private static final String DOCUMENT_CHUNK_INDEX = "document_chunks";
+    private static final String DOCUMENTS_INDEX = "documents";
     private final RestHighLevelClient esClient;
-    private final ObjectMapper objectMapper; // For converting ES hits to DocumentChunk objects
+    private final ObjectMapper objectMapper;
 
     public ElasticsearchRetrievalService(RestHighLevelClient esClient, ObjectMapper objectMapper) {
         this.esClient = esClient;
@@ -29,11 +30,29 @@ public class ElasticsearchRetrievalService {
     }
 
     public List<DocumentChunk> retrieveTopKChunks(String query, int topK) throws IOException {
-        SearchRequest searchRequest = new SearchRequest(DOCUMENT_CHUNK_INDEX);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
 
-        // Simple match query for now. In a real RAG, this would be a vector search or a more complex query.
-        searchSourceBuilder.query(QueryBuilders.matchQuery("content", query));
+        String trimmedQuery = query.trim();
+        List<DocumentChunk> allChunks = new ArrayList<>();
+
+        // 1. 检索 document_chunks 索引（PDF文档切片）
+        allChunks.addAll(searchIndex(DOCUMENT_CHUNK_INDEX, trimmedQuery, topK));
+
+        // 2. 检索 documents 索引（博客文章）
+        allChunks.addAll(searchIndex(DOCUMENTS_INDEX, trimmedQuery, topK));
+
+        // 按相关性排序，取前 topK 个
+        return allChunks.stream()
+                .limit(topK)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    private List<DocumentChunk> searchIndex(String indexName, String query, int topK) throws IOException {
+        SearchRequest searchRequest = new SearchRequest(indexName);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(query, "content", "title", "tags"));
         searchSourceBuilder.size(topK);
         searchRequest.source(searchSourceBuilder);
 

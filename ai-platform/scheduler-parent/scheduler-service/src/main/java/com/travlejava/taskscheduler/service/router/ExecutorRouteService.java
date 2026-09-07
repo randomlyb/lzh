@@ -31,9 +31,13 @@ public class ExecutorRouteService {
             throw new RuntimeException("No available executors for job: " + job.getJobName());
         }
 
-        ExecutorRouter router = routerMap.get(job.getRouteStrategy());
+        RouteStrategy strategy = job.getRouteStrategy();
+        if (strategy == null) {
+            strategy = RouteStrategy.ROUND_ROBIN; // Default to round-robin
+        }
+        ExecutorRouter router = routerMap.get(strategy);
         if (router == null) {
-            throw new IllegalArgumentException("Unknown route strategy: " + job.getRouteStrategy());
+            throw new IllegalArgumentException("Unknown route strategy: " + strategy);
         }
 
         return router.route(job, availableExecutors);

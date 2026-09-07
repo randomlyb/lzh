@@ -21,16 +21,24 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
         AuthResponse authResponse = authService.login(loginRequest);
+        authResponse.setCode(200);
+        authResponse.setMessage("登录成功");
         return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
         try {
             authService.register(registerRequest);
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+            AuthResponse response = new AuthResponse();
+            response.setCode(200);
+            response.setMessage("注册成功");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            AuthResponse response = new AuthResponse();
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

@@ -9,4 +9,12 @@ public class TaskExecuteParam implements Serializable {
     private String executorHandler;
     private String executorParams;
     private Long logId;
+
+    public String getJobParam() {
+        return executorParams;
+    }
+
+    public void setJobParam(String jobParam) {
+        this.executorParams = jobParam;
+    }
 }

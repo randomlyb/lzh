@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userMapper.selectOne(com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<User>().eq("username", username));
+        User user = userMapper.selectOne(new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<User>().eq("username", username));
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

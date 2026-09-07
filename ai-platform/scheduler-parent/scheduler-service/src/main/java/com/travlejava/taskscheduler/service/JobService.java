@@ -10,6 +10,8 @@ import com.travlejava.taskscheduler.service.dto.JobUpdateRequest;
 import com.travlejava.taskscheduler.service.dto.JobResponse;
 import org.quartz.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,29 @@ public class JobService extends ServiceImpl<JobMapper, Job> {
     public JobService(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void restoreJobsOnStartup() {
+        try {
+            List<Job> runningJobs = list().stream()
+                    .filter(j -> "RUNNING".equals(j.getStatus()))
+                    .collect(Collectors.toList());
+            for (Job job : runningJobs) {
+                try {
+                    scheduleJob(job);
+                } catch (SchedulerException e) {
+                    logger.error("Failed to restore job {} on startup", job.getId(), e);
+                }
+            }
+            if (!runningJobs.isEmpty()) {
+                logger.info("Restored {} running jobs from database", runningJobs.size());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to restore jobs on startup", e);
+        }
+    }
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JobService.class);
 
     public JobResponse createJob(JobCreateRequest request) {
         Job job = new Job();

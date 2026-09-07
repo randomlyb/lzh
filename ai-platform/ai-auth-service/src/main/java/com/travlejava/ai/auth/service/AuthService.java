@@ -7,6 +7,9 @@ import com.travlejava.ai.pojo.auth.User;
 import com.travlejava.ai.pojo.auth.dto.AuthResponse;
 import com.travlejava.ai.pojo.auth.dto.LoginRequest;
 import com.travlejava.ai.pojo.auth.dto.RegisterRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,39 +19,65 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+    private static final String TOKEN_PREFIX = "auth:token:";
+    private static final long TOKEN_EXPIRE_HOURS = 24;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final StringRedisTemplate redisTemplate;
 
-    public AuthService(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public AuthService(AuthenticationManager authenticationManager, 
+                      JwtTokenProvider tokenProvider, 
+                      PasswordEncoder passwordEncoder, 
+                      UserMapper userMapper,
+                      StringRedisTemplate redisTemplate) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     public AuthResponse login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = tokenProvider.generateToken(authentication);
-        // In a real application, you might generate a refresh token here as well
-        String refreshToken = "mockRefreshToken"; // Placeholder
-
+        logger.info("Login attempt for user: {}", loginRequest.getUsername());
+        
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("username", loginRequest.getUsername()));
+        if (user == null) {
+            logger.warn("User not found: {}", loginRequest.getUsername());
+            throw new RuntimeException("用户名或密码错误");
+        }
 
-        return new AuthResponse(jwt, refreshToken, user.getId(), user.getUsername());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String jwt = tokenProvider.generateToken(authentication);
+            String refreshToken = "mockRefreshToken";
+
+            // 存储Token到Redis,24小时过期
+            String tokenKey = TOKEN_PREFIX + user.getId();
+            redisTemplate.opsForValue().set(tokenKey, jwt, TOKEN_EXPIRE_HOURS, TimeUnit.HOURS);
+            logger.info("Token stored in Redis for user: {}", user.getId());
+
+            return new AuthResponse(null, null, jwt, refreshToken, user.getId(), user.getUsername());
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            logger.warn("Authentication failed for user: {}", loginRequest.getUsername());
+            throw new RuntimeException("用户名或密码错误");
+        }
     }
 
     public User register(RegisterRequest registerRequest) {
@@ -85,5 +114,23 @@ public class AuthService {
         // In a real application, you would validate the old refresh token,
         // generate new access and refresh tokens, and update stored tokens.
         throw new UnsupportedOperationException("Refresh token not implemented yet.");
+    }
+
+    /**
+     * 验证Token是否有效(从Redis检查)
+     */
+    public boolean validateToken(Long userId, String token) {
+        String tokenKey = TOKEN_PREFIX + userId;
+        String storedToken = redisTemplate.opsForValue().get(tokenKey);
+        return token.equals(storedToken);
+    }
+
+    /**
+     * 登出:删除Redis中的Token
+     */
+    public void logout(Long userId) {
+        String tokenKey = TOKEN_PREFIX + userId;
+        redisTemplate.delete(tokenKey);
+        logger.info("User {} logged out, token removed from Redis", userId);
     }
 }

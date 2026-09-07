@@ -1,8 +1,10 @@
 package com.travlejava.taskscheduler.common.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class Result<T> {
     private int code;
     private String message;
@@ -25,5 +27,13 @@ public class Result<T> {
         result.setCode(500);
         result.setMessage(message);
         return result;
+    }
+
+    public static <T> Result<T> fail(String message) {
+        return error(message);
+    }
+
+    public boolean isSuccess() {
+        return this.code == 200;
     }
 }

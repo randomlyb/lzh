@@ -1,6 +1,6 @@
 package com.travlejava.ai.pojo.document.dto;
 
-import com.travlejava.ai.pojo.entity.document.DocumentMetadata;
+import com.travlejava.ai.pojo.document.entity.DocumentMetadata;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ public class DocumentResponse implements Serializable {
     private String description;
     private String filePath;
     private String fileType;
-    private String status; // e.g., UPLOADED, PARSING, PARSED, FAILED
+    private String status;
     private LocalDateTime uploadTime;
     private LocalDateTime lastUpdateTime;
     private Long knowledgeBaseId;

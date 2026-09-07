@@ -1,21 +1,27 @@
 server:
-  port: 8082
+  port: ${AUTH_SERVER_PORT:8082}
 
 spring:
   application:
     name: ai-auth-service
 
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        enabled: true
+
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ai_knowledge_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root
-    password: 1234
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/ai_knowledge_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       database: 2
 
 mybatis-plus:
@@ -26,9 +32,9 @@ mybatis-plus:
       id-type: auto
 
 app:
-  jwtSecret: ASecretKeyForJWTThatIsLongEnoughToEnsureSecurityAndShouldBeStoredInEnvironmentVariables
-  jwtExpirationInMs: 86400000 # 24 hours
+  jwtSecret: ${JWT_SECRET:ASecretKeyForJWTThatIsLongEnoughToEnsureSecurityAndShouldBeStoredInEnvironmentVariables}
+  jwtExpirationInMs: ${JWT_EXPIRATION:86400000}
 
 logging:
   level:
-    com.travlejava.ai: debug
+    com.travlejava.ai: ${LOG_LEVEL:info}

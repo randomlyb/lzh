@@ -2,7 +2,7 @@ package com.travlejava.ai.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.travlejava.ai.pojo.document.DocumentMetadata;
+import com.travlejava.ai.pojo.document.entity.DocumentMetadata;
 import com.travlejava.ai.pojo.knowledge.KnowledgeBase;
 import com.travlejava.ai.pojo.knowledge.KnowledgeDocument;
 import com.travlejava.ai.pojo.knowledge.dto.AddDocumentToKbRequest;
@@ -11,7 +11,8 @@ import com.travlejava.ai.pojo.knowledge.dto.KnowledgeBaseResponse;
 import com.travlejava.ai.service.mapper.DocumentMapper;
 import com.travlejava.ai.service.mapper.KnowledgeBaseMapper;
 import com.travlejava.ai.service.mapper.KnowledgeDocumentMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +21,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, KnowledgeBase> {
+
+    private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseService.class);
 
     private final KnowledgeDocumentMapper knowledgeDocumentMapper;
     private final DocumentMapper documentMapper;
 
-    public KnowledgeBaseService(KnowledgeBaseMapper knowledgeBaseMapper, KnowledgeDocumentMapper knowledgeDocumentMapper, DocumentMapper documentMapper) {
-        super(knowledgeBaseMapper);
+    public KnowledgeBaseService(KnowledgeDocumentMapper knowledgeDocumentMapper, DocumentMapper documentMapper) {
         this.knowledgeDocumentMapper = knowledgeDocumentMapper;
         this.documentMapper = documentMapper;
     }
@@ -37,10 +38,10 @@ public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, Knowl
     public KnowledgeBaseResponse createKnowledgeBase(KnowledgeBaseRequest request) {
         KnowledgeBase knowledgeBase = new KnowledgeBase();
         BeanUtils.copyProperties(request, knowledgeBase);
-        knowledgeBase.setCreatedAt(LocalDateTime.now());
-        knowledgeBase.setUpdatedAt(LocalDateTime.now());
+        knowledgeBase.setCreateTime(LocalDateTime.now());
+        knowledgeBase.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(knowledgeBase);
-        log.info("Created knowledge base: {}", knowledgeBase.getName());
+        logger.info("Created knowledge base: {}", knowledgeBase.getName());
         return convertToResponse(knowledgeBase);
     }
 
@@ -62,19 +63,18 @@ public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, Knowl
             return null;
         }
         BeanUtils.copyProperties(request, knowledgeBase);
-        knowledgeBase.setUpdatedAt(LocalDateTime.now());
+        knowledgeBase.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(knowledgeBase);
-        log.info("Updated knowledge base: {}", knowledgeBase.getName());
+        logger.info("Updated knowledge base: {}", knowledgeBase.getName());
         return convertToResponse(knowledgeBase);
     }
 
     @Transactional
     public boolean deleteKnowledgeBase(Long id) {
-        // Also delete associated knowledge documents
         knowledgeDocumentMapper.delete(new LambdaQueryWrapper<KnowledgeDocument>().eq(KnowledgeDocument::getKnowledgeBaseId, id));
         boolean deleted = removeById(id);
         if (deleted) {
-            log.info("Deleted knowledge base with ID: {}", id);
+            logger.info("Deleted knowledge base with ID: {}", id);
         }
         return deleted;
     }
@@ -90,30 +90,30 @@ public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, Knowl
 
         KnowledgeBase knowledgeBase = getById(knowledgeBaseId);
         if (knowledgeBase == null) {
-            log.warn("Knowledge base with ID {} not found.", knowledgeBaseId);
+            logger.warn("Knowledge base with ID {} not found.", knowledgeBaseId);
             return false;
         }
 
         for (Long documentId : documentIds) {
             DocumentMetadata document = documentMapper.selectById(documentId);
             if (document == null) {
-                log.warn("Document with ID {} not found. Skipping.", documentId);
+                logger.warn("Document with ID {} not found. Skipping.", documentId);
                 continue;
             }
-            // Check if already added
-            if (knowledgeDocumentMapper.selectCount(new LambdaQueryWrapper<KnowledgeDocument>()
+            Long existing = knowledgeDocumentMapper.selectCount(new LambdaQueryWrapper<KnowledgeDocument>()
                     .eq(KnowledgeDocument::getKnowledgeBaseId, knowledgeBaseId)
-                    .eq(KnowledgeDocument::getDocumentId, documentId)) > 0) {
-                log.info("Document {} already in knowledge base {}. Skipping.", documentId, knowledgeBaseId);
+                    .eq(KnowledgeDocument::getDocumentId, documentId));
+            if (existing != null && existing > 0) {
+                logger.info("Document {} already in knowledge base {}. Skipping.", documentId, knowledgeBaseId);
                 continue;
             }
 
             KnowledgeDocument knowledgeDocument = new KnowledgeDocument();
             knowledgeDocument.setKnowledgeBaseId(knowledgeBaseId);
             knowledgeDocument.setDocumentId(documentId);
-            knowledgeDocument.setCreatedAt(LocalDateTime.now());
+            knowledgeDocument.setCreateTime(LocalDateTime.now());
             knowledgeDocumentMapper.insert(knowledgeDocument);
-            log.info("Added document {} to knowledge base {}.", documentId, knowledgeBaseId);
+            logger.info("Added document {} to knowledge base {}.", documentId, knowledgeBaseId);
         }
         return true;
     }
@@ -124,7 +124,7 @@ public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, Knowl
                 .eq(KnowledgeDocument::getKnowledgeBaseId, knowledgeBaseId)
                 .eq(KnowledgeDocument::getDocumentId, documentId));
         if (deletedRows > 0) {
-            log.info("Removed document {} from knowledge base {}.", documentId, knowledgeBaseId);
+            logger.info("Removed document {} from knowledge base {}.", documentId, knowledgeBaseId);
             return true;
         }
         return false;
@@ -133,9 +133,11 @@ public class KnowledgeBaseService extends ServiceImpl<KnowledgeBaseMapper, Knowl
     private KnowledgeBaseResponse convertToResponse(KnowledgeBase knowledgeBase) {
         KnowledgeBaseResponse response = new KnowledgeBaseResponse();
         BeanUtils.copyProperties(knowledgeBase, response);
-        Integer documentCount = knowledgeDocumentMapper.selectCount(new LambdaQueryWrapper<KnowledgeDocument>()
+        response.setCreatedAt(knowledgeBase.getCreateTime());
+        response.setUpdatedAt(knowledgeBase.getUpdateTime());
+        Long documentCount = knowledgeDocumentMapper.selectCount(new LambdaQueryWrapper<KnowledgeDocument>()
                 .eq(KnowledgeDocument::getKnowledgeBaseId, knowledgeBase.getId()));
-        response.setDocumentCount(documentCount);
+        response.setDocumentCount(documentCount != null ? documentCount.intValue() : 0);
         return response;
     }
 }
