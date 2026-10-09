@@ -1,21 +1,14 @@
 package com.travlejava.ai.service.agent;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travlejava.ai.pojo.agent.tool.ToolCall;
-import com.travlejava.ai.pojo.agent.tool.ToolDefinition;
-import com.travlejava.ai.pojo.agent.tool.ToolResult;
 import com.travlejava.ai.pojo.rag.dto.ChatRequest;
 import com.travlejava.ai.pojo.rag.dto.ChatResponse;
 import com.travlejava.ai.service.ChatHistoryService;
-import com.travlejava.ai.service.agent.tools.AgentTool;
-import com.travlejava.ai.service.rag.llm.DeepSeekClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * 任务监控分析 Agent
@@ -25,25 +18,14 @@ import java.util.stream.Collectors;
 public class JobAnalysisAgent {
 
     private static final Logger logger = LoggerFactory.getLogger(JobAnalysisAgent.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final int MAX_ITERATIONS = 6;
 
-    private final DeepSeekClient deepSeekClient;
-    private final Map<String, AgentTool> tools;
-    private final List<ToolDefinition> toolDefinitions;
+    private final ToolCallLoop toolCallLoop;
     private final ChatHistoryService chatHistoryService;
 
-    public JobAnalysisAgent(DeepSeekClient deepSeekClient,
-                           List<AgentTool> agentTools,
-                           ChatHistoryService chatHistoryService) {
-        this.deepSeekClient = deepSeekClient;
-        this.tools = agentTools.stream()
-                .collect(Collectors.toMap(
-                        tool -> tool.getDefinition().getName(),
-                        tool -> tool
-                ));
-        this.toolDefinitions = agentTools.stream()
-                .map(AgentTool::getDefinition)
-                .collect(Collectors.toList());
+    public JobAnalysisAgent(ToolCallLoop toolCallLoop,
+                            ChatHistoryService chatHistoryService) {
+        this.toolCallLoop = toolCallLoop;
         this.chatHistoryService = chatHistoryService;
     }
 
@@ -56,7 +38,16 @@ public class JobAnalysisAgent {
         String userId = chatRequest.getUserId();
         String conversationId = chatRequest.getConversationId();
 
-        return chatWithTools(systemPrompt, userQuestion, 6, 0)
+        ToolCallLoop.Request loopRequest = new ToolCallLoop.Request();
+        loopRequest.setSystemPrompt(systemPrompt);
+        loopRequest.setUserPrompt(userQuestion);
+        loopRequest.setAllowedTools(ToolCallLoop.JOB_TOOLS);
+        loopRequest.setMaxIterations(MAX_ITERATIONS);
+        loopRequest.setMaxTokens(2048);
+        loopRequest.setTemperature(0.3);
+
+        return toolCallLoop.run(loopRequest)
+                .map(ToolCallLoop.Outcome::getAnswer)
                 .doOnSuccess(answer -> {
                     // 保存用户消息到 Redis
                     try {
@@ -74,89 +65,6 @@ public class JobAnalysisAgent {
                     }
                 })
                 .map(answer -> new ChatResponse(answer, List.of(), null, conversationId));
-    }
-
-    private Mono<String> chatWithTools(String systemPrompt, String userQuestion,
-                                        int maxRetries, int iteration) {
-        if (iteration >= maxRetries) {
-            return Mono.just("已达到最大分析次数，请简化问题后重试");
-        }
-
-        List<com.travlejava.ai.pojo.llm.deepseek.Message> messages = new ArrayList<>();
-        messages.add(new com.travlejava.ai.pojo.llm.deepseek.Message("system", systemPrompt));
-        messages.add(new com.travlejava.ai.pojo.llm.deepseek.Message("user", userQuestion));
-
-        com.travlejava.ai.pojo.llm.deepseek.DeepSeekChatRequest chatRequest = new com.travlejava.ai.pojo.llm.deepseek.DeepSeekChatRequest();
-        chatRequest.setMessages(messages);
-        chatRequest.setModel("qwen-plus");
-        chatRequest.setTemperature(0.3);
-        chatRequest.setMax_tokens(2048);
-        chatRequest.setStream(false);
-        chatRequest.setTools(toolDefinitions);
-        chatRequest.setTool_choice("auto");
-
-        return deepSeekClient.chatCompletion(chatRequest)
-                .flatMap(response -> {
-                    if (hasToolCalls(response)) {
-                        List<ToolCall> toolCalls = extractToolCalls(response);
-                        logger.info("任务分析Agent检测到{}个工具调用", toolCalls.size());
-
-                        List<Mono<ToolResult>> toolResults = toolCalls.stream()
-                                .map(this::executeTool)
-                                .collect(Collectors.toList());
-
-                        return Mono.zip(toolResults, results -> {
-                            StringBuilder toolResultsText = new StringBuilder();
-                            for (Object result : results) {
-                                ToolResult toolResult = (ToolResult) result;
-                                toolResultsText.append("【")
-                                        .append(toolResult.getToolName())
-                                        .append("】结果：\n")
-                                        .append(toolResult.getResult())
-                                        .append("\n\n");
-                            }
-
-                            String nextQuestion = userQuestion + "\n\n工具返回数据：\n" + toolResultsText.toString();
-                            return chatWithTools(systemPrompt, nextQuestion, maxRetries, iteration + 1);
-                        }).flatMap(mono -> mono);
-                    } else {
-                        String content = response.getChoices().get(0).getMessage().getContent();
-                        return Mono.just(content);
-                    }
-                });
-    }
-
-    private Mono<ToolResult> executeTool(ToolCall toolCall) {
-        AgentTool tool = tools.get(toolCall.getFunction().getName());
-        if (tool == null) {
-            logger.warn("未找到工具: {}", toolCall.getFunction().getName());
-            return Mono.just(new ToolResult(toolCall.getId(), toolCall.getFunction().getName(),
-                    "工具不存在", false));
-        }
-
-        try {
-            Map<String, Object> arguments = objectMapper.readValue(
-                    toolCall.getFunction().getArguments(), Map.class);
-            return Mono.fromCallable(() -> tool.execute(arguments))
-                    .onErrorResume(e -> {
-                        logger.error("工具执行失败: {}", toolCall.getFunction().getName(), e);
-                        return Mono.just(new ToolResult(toolCall.getId(), toolCall.getFunction().getName(),
-                                "执行失败：" + e.getMessage(), false));
-                    });
-        } catch (Exception e) {
-            logger.error("解析工具参数失败", e);
-            return Mono.just(new ToolResult(toolCall.getId(), toolCall.getFunction().getName(),
-                    "参数解析失败", false));
-        }
-    }
-
-    private boolean hasToolCalls(com.travlejava.ai.pojo.llm.deepseek.DeepSeekChatResponse response) {
-        return response.getChoices().get(0).getMessage().getTool_calls() != null
-                && !response.getChoices().get(0).getMessage().getTool_calls().isEmpty();
-    }
-
-    private List<ToolCall> extractToolCalls(com.travlejava.ai.pojo.llm.deepseek.DeepSeekChatResponse response) {
-        return response.getChoices().get(0).getMessage().getTool_calls();
     }
 
     private String buildSystemPrompt() {

@@ -61,6 +61,12 @@
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>7.17.10</version>
         </dependency>
+        <!-- ES 8.x Java Client (用于 kNN 检索) -->
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>8.13.4</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -120,6 +126,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- SQL AST 解析：Text2SQL 安全校验 -->
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>4.9</version>
         </dependency>
     </dependencies>
 

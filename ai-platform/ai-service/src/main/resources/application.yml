@@ -57,8 +57,39 @@ logging:
     org.springframework.web: debug
 
 deepseek:
-  api-key: ${DEEPSEEK_API_KEY:sk-ws-H.EPYXYLH.oiMb.MEQCIA_Ccdk9Ph4bg35fedSKkk6IUO6yAf9xI8dtbwiZgTFPAiAviHVwysxUfDbfinf6dBmmX6-UDivMfcXX70RCp7Fraw}
+  api-key: ${DEEPSEEK_API_KEY:sk-ws-H.PLLXIMY.yBK3.MEQCIDi95nh0CVZ-m28zK9vz5tKzCXgMeuagOpigckyTBOAkAiBibLoZ6_BWzoArTf0yGjzJ2daRnPVHM_OQS4xglMkRtg}
   base-url: ${DEEPSEEK_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
+  embedding-model: ${DEEPSEEK_EMBEDDING_MODEL:text-embedding-v3}
+  # 向量维度，必须与 ES 索引 dense_vector 的 dims 一致
+  embedding-dim: ${DEEPSEEK_EMBEDDING_DIM:1024}
+  rerank-model: ${DEEPSEEK_RERANK_MODEL:gte-rerank-v2}
+
+rag:
+  bm25-topk: ${RAG_BM25_TOPK:50}
+  knn-topk: ${RAG_KNN_TOPK:50}
+  rerank-topk: ${RAG_RERANK_TOPK:10}
+  final-topk: ${RAG_FINAL_TOPK:10}
+  query-expansion-enabled: ${RAG_QUERY_EXPANSION_ENABLED:true}
+  query-budget: ${RAG_QUERY_BUDGET:3}
+  min-query-length: ${RAG_MIN_QUERY_LENGTH:10}
+  rerank-enabled: ${RAG_RERANK_ENABLED:true}
+
+text2sql:
+  confidence-threshold: ${TEXT2SQL_CONFIDENCE_THRESHOLD:0.7}
+  max-retries: ${TEXT2SQL_MAX_RETRIES:3}
+  # 执行阶段：限制返回行数与查询超时
+  max-rows: ${TEXT2SQL_MAX_ROWS:200}
+  query-timeout-seconds: ${TEXT2SQL_QUERY_TIMEOUT_SECONDS:10}
+
+# ReAct 工具调用循环
+agent:
+  model: ${AGENT_MODEL:deepseek-chat}
+  # 消息总字符预算，超出后对最旧的工具结果做压缩
+  context-max-chars: ${AGENT_CONTEXT_MAX_CHARS:24000}
+  # 单条工具结果落库前的最大字符数
+  tool-result-max-chars: ${AGENT_TOOL_RESULT_MAX_CHARS:4000}
+  compress-head-chars: ${AGENT_COMPRESS_HEAD_CHARS:400}
+  compress-tail-chars: ${AGENT_COMPRESS_TAIL_CHARS:200}
 
 app:
   upload-dir: ${UPLOAD_DIR:/tmp/ai-platform-uploads}
