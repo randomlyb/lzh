@@ -45,20 +45,13 @@ public class JobAnalysisAgent {
      * 执行任务分析对话
      */
     public Mono<ChatResponse> analyze(ChatRequest chatRequest) {
-        String systemPrompt = buildSystemPrompt();
         String userQuestion = chatRequest.getQuestion();
         String userId = chatRequest.getUserId();
         String conversationId = chatRequest.getConversationId();
 
-        ToolCallLoop.Request loopRequest = new ToolCallLoop.Request();
-        loopRequest.setSystemPrompt(systemPrompt);
-        loopRequest.setUserPrompt(userQuestion);
         // 载入该会话的历史消息，让 Agent 具备多轮记忆（此前只 save 不 load）
-        loopRequest.setHistory(loadRecentHistory(userId, conversationId));
-        loopRequest.setAllowedTools(ToolCallLoop.JOB_TOOLS);
-        loopRequest.setMaxIterations(MAX_ITERATIONS);
-        loopRequest.setMaxTokens(2048);
-        loopRequest.setTemperature(0.3);
+        ToolCallLoop.Request loopRequest = buildRequest(userQuestion,
+                loadRecentHistory(userId, conversationId));
 
         return toolCallLoop.run(loopRequest)
                 .map(ToolCallLoop.Outcome::getAnswer)
@@ -79,6 +72,27 @@ public class JobAnalysisAgent {
                     }
                 })
                 .map(answer -> new ChatResponse(answer, List.of(), null, conversationId));
+    }
+
+    /** 构造一次任务分析请求（对话与离线评测复用同一套提示词 / 工具 / 预算） */
+    ToolCallLoop.Request buildRequest(String userQuestion, List<Message> history) {
+        ToolCallLoop.Request loopRequest = new ToolCallLoop.Request();
+        loopRequest.setSystemPrompt(buildSystemPrompt());
+        loopRequest.setUserPrompt(userQuestion);
+        loopRequest.setHistory(history);
+        loopRequest.setAllowedTools(ToolCallLoop.JOB_TOOLS);
+        loopRequest.setMaxIterations(MAX_ITERATIONS);
+        loopRequest.setMaxTokens(2048);
+        loopRequest.setTemperature(0.3);
+        return loopRequest;
+    }
+
+    /**
+     * 单轮执行，不读写会话历史。
+     * 供 Agent 离线评测使用：返回的 Outcome 带工具调用轨迹与迭代轮次。
+     */
+    public Mono<ToolCallLoop.Outcome> runOnce(String question) {
+        return toolCallLoop.run(buildRequest(question, new ArrayList<>()));
     }
 
     /**

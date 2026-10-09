@@ -1,0 +1,153 @@
+[
+  {
+    "id": 1,
+    "question": "最近任务整体执行情况怎么样？",
+    "category": "统计",
+    "expectedTools": [
+      "get_job_statistics"
+    ],
+    "answerKeywords": [
+      "成功率",
+      "失败"
+    ],
+    "maxSteps": 2
+  },
+  {
+    "id": 2,
+    "question": "近7天任务执行趋势如何？",
+    "category": "趋势",
+    "expectedTools": [
+      "get_job_execution_trend"
+    ],
+    "answerKeywords": [
+      "趋势"
+    ],
+    "maxSteps": 2
+  },
+  {
+    "id": 3,
+    "question": "哪些任务失败最多？",
+    "category": "失败诊断",
+    "expectedTools": [
+      "get_failed_jobs"
+    ],
+    "answerKeywords": [
+      "失败"
+    ],
+    "maxSteps": 2
+  },
+  {
+    "id": 4,
+    "question": "各任务的平均耗时是多少？",
+    "category": "性能",
+    "expectedTools": [
+      "get_job_duration_statistics"
+    ],
+    "answerKeywords": [
+      "耗时"
+    ],
+    "maxSteps": 2
+  },
+  {
+    "id": 5,
+    "question": "给我看一下具体的错误日志",
+    "category": "日志",
+    "expectedTools": [
+      "get_job_logs"
+    ],
+    "answerKeywords": [
+      "日志"
+    ],
+    "maxSteps": 2
+  },
+  {
+    "id": 6,
+    "question": "昨天为什么有大量任务失败？",
+    "category": "多步诊断",
+    "expectedTools": [
+      "get_failed_jobs",
+      "get_job_logs"
+    ],
+    "answerKeywords": [
+      "失败"
+    ],
+    "maxSteps": 4
+  },
+  {
+    "id": 7,
+    "question": "系统整体健康度怎么样？",
+    "category": "综合",
+    "expectedTools": [
+      "get_job_statistics",
+      "get_job_execution_trend"
+    ],
+    "answerKeywords": [
+      "成功率"
+    ],
+    "maxSteps": 4
+  },
+  {
+    "id": 8,
+    "question": "成功率低是哪个环节的问题？",
+    "category": "多步诊断",
+    "expectedTools": [
+      "get_job_statistics",
+      "get_failed_jobs"
+    ],
+    "answerKeywords": [
+      "失败"
+    ],
+    "maxSteps": 4
+  },
+  {
+    "id": 9,
+    "question": "耗时最长的任务是哪个？",
+    "category": "性能",
+    "expectedTools": [
+      "get_job_duration_statistics"
+    ],
+    "answerKeywords": [
+      "耗时"
+    ],
+    "maxSteps": 3
+  },
+  {
+    "id": 10,
+    "question": "最近三天的失败集中在什么时候？",
+    "category": "多步诊断",
+    "expectedTools": [
+      "get_job_execution_trend",
+      "get_failed_jobs"
+    ],
+    "answerKeywords": [
+      "失败"
+    ],
+    "maxSteps": 4
+  },
+  {
+    "id": 11,
+    "question": "任务调度最近稳定吗？",
+    "category": "综合",
+    "expectedTools": [
+      "get_job_statistics",
+      "get_job_execution_trend"
+    ],
+    "answerKeywords": [
+      "成功率"
+    ],
+    "maxSteps": 4
+  },
+  {
+    "id": 12,
+    "question": "近一周失败任务的平均耗时是多少？",
+    "category": "多步诊断",
+    "expectedTools": [
+      "get_failed_jobs",
+      "get_job_duration_statistics"
+    ],
+    "answerKeywords": [
+      "耗时"
+    ],
+    "maxSteps": 4
+  }
+]

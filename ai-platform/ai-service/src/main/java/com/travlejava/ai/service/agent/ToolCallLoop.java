@@ -164,7 +164,7 @@ public class ToolCallLoop {
                         for (ToolResult result : results) {
                             messages.add(new Message("tool", truncate(result.getResult()), null,
                                     result.getToolCallId()));
-                            trace.add(result.getToolName() + (result.isSuccess() ? " OK" : " FAIL"));
+                            trace.add(result.getToolName());
                         }
                         return step(messages, definitions, request, iteration + 1, trace);
                     });
