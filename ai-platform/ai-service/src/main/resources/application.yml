@@ -90,6 +90,9 @@ agent:
   tool-result-max-chars: ${AGENT_TOOL_RESULT_MAX_CHARS:4000}
   compress-head-chars: ${AGENT_COMPRESS_HEAD_CHARS:400}
   compress-tail-chars: ${AGENT_COMPRESS_TAIL_CHARS:200}
+  # 多轮对话：参与上下文的历史消息条数与单条长度上限
+  history-max-messages: ${AGENT_HISTORY_MAX_MESSAGES:6}
+  history-message-max-chars: ${AGENT_HISTORY_MESSAGE_MAX_CHARS:1200}
 
 app:
   upload-dir: ${UPLOAD_DIR:/tmp/ai-platform-uploads}

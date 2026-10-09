@@ -1,14 +1,18 @@
 package com.travlejava.ai.service.agent;
 
+import com.travlejava.ai.pojo.llm.deepseek.Message;
 import com.travlejava.ai.pojo.rag.dto.ChatRequest;
 import com.travlejava.ai.pojo.rag.dto.ChatResponse;
 import com.travlejava.ai.service.ChatHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 任务监控分析 Agent
@@ -22,6 +26,14 @@ public class JobAnalysisAgent {
 
     private final ToolCallLoop toolCallLoop;
     private final ChatHistoryService chatHistoryService;
+
+    /** 参与上下文的历史消息条数上限（user + assistant 合计） */
+    @Value("${agent.history-max-messages:6}")
+    private int historyMaxMessages;
+
+    /** 单条历史消息的字符上限，超出则截断 */
+    @Value("${agent.history-message-max-chars:1200}")
+    private int historyMessageMaxChars;
 
     public JobAnalysisAgent(ToolCallLoop toolCallLoop,
                             ChatHistoryService chatHistoryService) {
@@ -41,6 +53,8 @@ public class JobAnalysisAgent {
         ToolCallLoop.Request loopRequest = new ToolCallLoop.Request();
         loopRequest.setSystemPrompt(systemPrompt);
         loopRequest.setUserPrompt(userQuestion);
+        // 载入该会话的历史消息，让 Agent 具备多轮记忆（此前只 save 不 load）
+        loopRequest.setHistory(loadRecentHistory(userId, conversationId));
         loopRequest.setAllowedTools(ToolCallLoop.JOB_TOOLS);
         loopRequest.setMaxIterations(MAX_ITERATIONS);
         loopRequest.setMaxTokens(2048);
@@ -65,6 +79,58 @@ public class JobAnalysisAgent {
                     }
                 })
                 .map(answer -> new ChatResponse(answer, List.of(), null, conversationId));
+    }
+
+    /**
+     * 从 Redis 载入最近若干轮对话，转换为标准的 user / assistant 消息。
+     *
+     * <p>此前 ChatHistoryService 只被 Controller 用于前端展示，Agent 从未读取，
+     * 导致同一 conversationId 的每次提问对模型而言都是一次全新会话。
+     */
+    private List<Message> loadRecentHistory(String userId, String conversationId) {
+        List<Message> history = new ArrayList<>();
+        if (conversationId == null || conversationId.isBlank()) {
+            return history;
+        }
+        try {
+            List<Map<String, Object>> raw = chatHistoryService.getHistory(userId, conversationId);
+            if (raw == null || raw.isEmpty()) {
+                return history;
+            }
+            int from = Math.max(0, raw.size() - historyMaxMessages);
+            for (Map<String, Object> item : raw.subList(from, raw.size())) {
+                Object roleObj = item.get("role");
+                Object contentObj = item.get("content");
+                if (roleObj == null || contentObj == null) {
+                    continue;
+                }
+                String role = String.valueOf(roleObj);
+                // 历史里只保留对话双方；tool / system 消息由本轮 ToolCallLoop 自行构建
+                if (!"user".equals(role) && !"assistant".equals(role)) {
+                    continue;
+                }
+                String content = truncateHistory(String.valueOf(contentObj));
+                if (!content.isEmpty()) {
+                    history.add(new Message(role, content));
+                }
+            }
+            logger.info("载入历史对话 {} 条: conversationId={}", history.size(), conversationId);
+        } catch (Exception e) {
+            // 历史加载失败不应阻断本轮对话
+            logger.warn("载入历史对话失败，按新会话继续: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+        return history;
+    }
+
+    private String truncateHistory(String content) {
+        if (content == null) {
+            return "";
+        }
+        if (historyMessageMaxChars <= 0 || content.length() <= historyMessageMaxChars) {
+            return content;
+        }
+        return content.substring(0, historyMessageMaxChars) + " ...[历史消息已截断]...";
     }
 
     private String buildSystemPrompt() {
