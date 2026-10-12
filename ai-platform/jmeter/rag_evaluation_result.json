@@ -1,0 +1,293 @@
+{
+  "total_questions": 20,
+  "correct_count": 0,
+  "wrong_count": 20,
+  "accuracy": 0.0,
+  "avg_response_time": 0.16,
+  "results": [
+    {
+      "id": 1,
+      "question": "什么是 RAG 检索增强生成？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.28,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 2,
+      "question": "如何优化 Elasticsearch 检索性能？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 3,
+      "question": "Spring Boot 如何实现微服务架构？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.16,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 4,
+      "question": "分布式任务调度有哪些实现方案？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.15,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 5,
+      "question": "Redis 缓存穿透如何解决？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 6,
+      "question": "RabbitMQ 消息队列如何保证消息不丢失？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.23,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 7,
+      "question": "ZooKeeper 在分布式系统中的作用？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.14,
+      "evaluation": {
+        "keyword_score": 0.2,
+        "topic_score": 0.0,
+        "overall_score": 0.08,
+        "matched_keywords": [
+          "配置"
+        ],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 8,
+      "question": "Quartz 定时任务如何实现集群？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.19,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 9,
+      "question": "Nacos 服务注册中心的工作原理？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.2,
+        "topic_score": 0.0,
+        "overall_score": 0.08,
+        "matched_keywords": [
+          "配置"
+        ],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 10,
+      "question": "如何实现高可用的微服务架构？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.14,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 11,
+      "question": "Docker 容器化部署的最佳实践？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.17,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 12,
+      "question": "Kubernetes 集群管理的基本概念？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.19,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 13,
+      "question": "MySQL 数据库性能优化技巧？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.16,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 14,
+      "question": "MyBatis 持久层框架的使用经验？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.16,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 15,
+      "question": "Vue3 前端开发的最佳实践？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.14,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 16,
+      "question": "Spring Cloud Alibaba 的核心组件？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 17,
+      "question": "微服务网关的作用和实现？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.15,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 18,
+      "question": "服务熔断降级的实现方案？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 19,
+      "question": "分布式链路追踪的实现？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    },
+    {
+      "id": 20,
+      "question": "日志收集与分析的最佳实践？",
+      "answer": "AI 服务暂时不可用（400 Bad Request from POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions），请稍后重试或检查 DeepSeek API 配置。",
+      "response_time": 0.13,
+      "evaluation": {
+        "keyword_score": 0.0,
+        "topic_score": 0.0,
+        "overall_score": 0.0,
+        "matched_keywords": [],
+        "matched_topics": [],
+        "is_correct": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "total_requests": 100,
+  "latency": {
+    "avg": "3.104s",
+    "p50": "2.930s",
+    "p95": "6.180s",
+    "p99": "7.281s",
+    "min": "1.116s",
+    "max": "7.281s"
+  },
+  "token_usage": {
+    "embedding_per_request": 15,
+    "embedding_total": 1500,
+    "rerank_per_request": 1000,
+    "rerank_total": 100000,
+    "llm_avg": 485,
+    "llm_total": 48455,
+    "total": 149955
+  },
+  "cost": {
+    "embedding": "¥0.0002",
+    "rerank": "¥0.0500",
+    "llm": "¥0.0388",
+    "total": "¥0.0890",
+    "per_request": "¥0.0009"
+  }
+}

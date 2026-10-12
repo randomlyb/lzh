@@ -1,0 +1,28 @@
+{
+  "total_requests": 100,
+  "ttft": {
+    "avg": "924.59ms",
+    "p50": "891.51ms",
+    "p95": "1187.72ms",
+    "p99": "1585.25ms",
+    "min": "763.84ms",
+    "max": "1585.25ms"
+  },
+  "total_time": {
+    "avg": "14018.26ms",
+    "p50": "13821.63ms",
+    "p95": "17777.59ms",
+    "p99": "20801.00ms"
+  },
+  "tps": {
+    "avg": "25.10",
+    "p50": "24.94",
+    "p95": "29.17"
+  },
+  "tokens": {
+    "avg_estimated": "329.18",
+    "total_estimated": 32918,
+    "avg_content_length": "988.60",
+    "total_content_length": 98860
+  }
+}

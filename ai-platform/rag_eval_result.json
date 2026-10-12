@@ -1,0 +1,622 @@
+{
+  "summary": {
+    "total": 20,
+    "passed": 18,
+    "failed": 2,
+    "hit_rate": 90.0,
+    "total_time": 21.45
+  },
+  "categories": {
+    "RAG架构": {
+      "total": 3,
+      "pass": 3
+    },
+    "Agent工具调用": {
+      "total": 3,
+      "pass": 1
+    },
+    "分布式调度": {
+      "total": 3,
+      "pass": 3
+    },
+    "微服务架构": {
+      "total": 4,
+      "pass": 4
+    },
+    "检索引擎": {
+      "total": 2,
+      "pass": 2
+    },
+    "LLM与生成": {
+      "total": 2,
+      "pass": 2
+    },
+    "认证安全": {
+      "total": 1,
+      "pass": 1
+    },
+    "熔断降级": {
+      "total": 1,
+      "pass": 1
+    },
+    "系统集成": {
+      "total": 1,
+      "pass": 1
+    }
+  },
+  "results": [
+    {
+      "id": 1,
+      "category": "RAG架构",
+      "question": "什么是RAG检索增强生成技术？",
+      "keywords": [
+        "检索增强生成",
+        "RAG",
+        "Retrieval Augmented Generation",
+        "检索",
+        "生成"
+      ],
+      "required_any": [
+        "检索",
+        "RAG",
+        "Retrieval"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，RAG（Retrieval Augmented Generation，检索增强生成）是一种将外部知识库检索与大语言模型生成相结合的技术。其核心流程包括：1. 文档处理阶段：原始文档通过分块（chunking）切成小段，每段生成向量嵌入（embedding）后存入向量数据库（如Ela...",
+      "elapsed": 1.31,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "检索增强生成",
+        "RAG",
+        "Retrieval Augmented Generation",
+        "检索",
+        "生成"
+      ]
+    },
+    {
+      "id": 2,
+      "category": "RAG架构",
+      "question": "RAG系统中的向量检索是怎么工作的？",
+      "keywords": [
+        "向量",
+        "embedding",
+        "嵌入",
+        "相似度",
+        "余弦",
+        "检索"
+      ],
+      "required_any": [
+        "向量",
+        "embedding",
+        "相似度",
+        "检索"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，RAG系统中的向量检索工作方式如下：\n\n在检索阶段，用户问题被转为向量，然后在向量数据库中做相似度检索（使用余弦相似度），找到最相关的k个文档片段。\n\n具体实现中，向量检索使用dense_vector字段存储embedding向量（本项目使用text-embedding-v2模型，...",
+      "elapsed": 1.56,
+      "passed": true,
+      "hit_ratio": 0.83,
+      "hit_keywords": [
+        "向量",
+        "embedding",
+        "相似度",
+        "余弦",
+        "检索"
+      ]
+    },
+    {
+      "id": 3,
+      "category": "RAG架构",
+      "question": "文档分块chunk的作用和策略有哪些？",
+      "keywords": [
+        "分块",
+        "chunk",
+        "切片",
+        "上下文",
+        "token",
+        "overlap"
+      ],
+      "required_any": [
+        "分块",
+        "chunk",
+        "切片"
+      ],
+      "success": true,
+      "answer": "根据上下文，文档分块（chunking）的作用是将原始文档切成小段，每段生成向量嵌入后存入向量数据库。关键策略包括：固定大小切分加上overlap（重叠）以保持上下文连贯。",
+      "elapsed": 0.99,
+      "passed": true,
+      "hit_ratio": 0.67,
+      "hit_keywords": [
+        "分块",
+        "chunk",
+        "上下文",
+        "overlap"
+      ]
+    },
+    {
+      "id": 4,
+      "category": "Agent工具调用",
+      "question": "什么是Agent的tool calling工具调用？",
+      "keywords": [
+        "工具调用",
+        "tool calling",
+        "function call",
+        "MCP",
+        "Agent"
+      ],
+      "required_any": [
+        "工具调用",
+        "tool",
+        "Agent",
+        "function"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Agent的tool calling工具调用是让大模型能够调用外部工具/API的机制。其工作流程包括：1. 定义工具：每个工具包含name、description、parameters（JSON Schema格式）；2. 模型决策：LLM根据用户意图判断是否需要调用工具，输出工具名...",
+      "elapsed": 1.28,
+      "passed": true,
+      "hit_ratio": 0.6,
+      "hit_keywords": [
+        "工具调用",
+        "tool calling",
+        "Agent"
+      ]
+    },
+    {
+      "id": 5,
+      "category": "Agent工具调用",
+      "question": "get_job_statistics工具能获取哪些信息？",
+      "keywords": [
+        "任务统计",
+        "成功",
+        "失败",
+        "成功率",
+        "执行次数"
+      ],
+      "required_any": [
+        "统计",
+        "成功",
+        "失败",
+        "执行"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，get_job_statistics工具用于获取任务执行统计（获取任务执行统计）。",
+      "elapsed": 0.82,
+      "passed": false,
+      "hit_ratio": 0.0,
+      "hit_keywords": []
+    },
+    {
+      "id": 6,
+      "category": "Agent工具调用",
+      "question": "get_job_logs工具是做什么用的？",
+      "keywords": [
+        "任务日志",
+        "job logs",
+        "执行日志",
+        "日志查询"
+      ],
+      "required_any": [
+        "日志",
+        "logs"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，get_job_logs工具用于查询任务执行日志。",
+      "elapsed": 0.43,
+      "passed": false,
+      "hit_ratio": 0.25,
+      "hit_keywords": [
+        "执行日志"
+      ]
+    },
+    {
+      "id": 7,
+      "category": "分布式调度",
+      "question": "Quartz定时任务调度的核心概念有哪些？",
+      "keywords": [
+        "Quartz",
+        "Scheduler",
+        "Trigger",
+        "Job",
+        "Cron",
+        "调度"
+      ],
+      "required_any": [
+        "Quartz",
+        "Trigger",
+        "Job",
+        "Cron",
+        "调度"
+      ],
+      "success": true,
+      "answer": "Based on the provided context, the core concepts of Quartz定时任务调度 include: Scheduler (调度器核心), Job (任务接口，实现execute方法), JobDetail (包装Job), Trigger (触发器，定...",
+      "elapsed": 0.85,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "Quartz",
+        "Scheduler",
+        "Trigger",
+        "Job",
+        "Cron",
+        "调度"
+      ]
+    },
+    {
+      "id": 8,
+      "category": "分布式调度",
+      "question": "Cron表达式0 0/5 * * * ?是什么意思？",
+      "keywords": [
+        "Cron",
+        "每5分钟",
+        "0 0/5",
+        "定时"
+      ],
+      "required_any": [
+        "5分钟",
+        "Cron"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Cron表达式0 0/5 * * * ?表示每5分钟执行一次。",
+      "elapsed": 0.9,
+      "passed": true,
+      "hit_ratio": 0.75,
+      "hit_keywords": [
+        "Cron",
+        "每5分钟",
+        "0 0/5"
+      ]
+    },
+    {
+      "id": 9,
+      "category": "分布式调度",
+      "question": "任务调度失败了怎么处理重试？",
+      "keywords": [
+        "重试",
+        "retry",
+        "失败重试",
+        "退避",
+        "间隔"
+      ],
+      "required_any": [
+        "重试",
+        "retry"
+      ],
+      "success": true,
+      "answer": "根据上下文，任务调度失败后的重试处理方式为：**失败指数退避重试（1min 5min 30min，最多5次）**。当单个任务连续重试超过阈值5次时，会触发熔断，防止无限重试。",
+      "elapsed": 1.07,
+      "passed": true,
+      "hit_ratio": 0.4,
+      "hit_keywords": [
+        "重试",
+        "退避"
+      ]
+    },
+    {
+      "id": 10,
+      "category": "微服务架构",
+      "question": "Nacos在微服务中起什么作用？",
+      "keywords": [
+        "Nacos",
+        "注册中心",
+        "配置中心",
+        "服务发现"
+      ],
+      "required_any": [
+        "Nacos",
+        "注册中心",
+        "配置中心"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Nacos是集注册中心和配置中心于一体的微服务基础设施，具有以下作用：\n\n- **注册中心功能**：服务注册（ai-auth-service、ai-service、scheduler-service均注册）、服务发现、健康检查（心跳检测自动剔除不健康实例）、客户端负载均衡。\n- *...",
+      "elapsed": 1.01,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "Nacos",
+        "注册中心",
+        "配置中心",
+        "服务发现"
+      ]
+    },
+    {
+      "id": 11,
+      "category": "微服务架构",
+      "question": "ZooKeeper在分布式调度中用来做什么？",
+      "keywords": [
+        "ZooKeeper",
+        "ZK",
+        "分布式协调",
+        "Leader",
+        "选举",
+        "锁"
+      ],
+      "required_any": [
+        "ZooKeeper",
+        "ZK",
+        "分布式",
+        "协调"
+      ],
+      "success": true,
+      "answer": "根据上下文，ZooKeeper在分布式调度中承担三个职责：\n\n1. **Leader选举**：多个scheduler-service实例通过创建临时顺序节点竞争Leader，序号最小者成为Leader负责任务分发，Leader挂掉后自动重选举。\n2. **分布式锁**：使用临时节点实现互斥锁，任务执...",
+      "elapsed": 1.06,
+      "passed": true,
+      "hit_ratio": 0.83,
+      "hit_keywords": [
+        "ZooKeeper",
+        "ZK",
+        "Leader",
+        "选举",
+        "锁"
+      ]
+    },
+    {
+      "id": 12,
+      "category": "微服务架构",
+      "question": "RabbitMQ消息队列有什么用？",
+      "keywords": [
+        "RabbitMQ",
+        "消息队列",
+        "MQ",
+        "异步",
+        "解耦",
+        "交换机",
+        "队列"
+      ],
+      "required_any": [
+        "RabbitMQ",
+        "消息",
+        "MQ",
+        "异步"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，RabbitMQ消息队列在本项目中用于两个场景：1. 任务状态通知：scheduler-service执行完任务后将结果发送到job.status.exchange，ai-service的JobStatusConsumer消费更新任务状态。2. AI分析请求异步化：前端请求先发MQ...",
+      "elapsed": 0.72,
+      "passed": true,
+      "hit_ratio": 0.71,
+      "hit_keywords": [
+        "RabbitMQ",
+        "消息队列",
+        "MQ",
+        "异步",
+        "队列"
+      ]
+    },
+    {
+      "id": 13,
+      "category": "微服务架构",
+      "question": "Redis缓存常见的应用场景有哪些？",
+      "keywords": [
+        "Redis",
+        "缓存",
+        "session",
+        "分布式锁",
+        "限流",
+        "排行榜"
+      ],
+      "required_any": [
+        "Redis",
+        "缓存"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Redis缓存的应用场景包括：\n\n1. 分布式Session：用户Token存Redis TTL=24h，所有微服务共享。\n2. 分布式锁（Redisson RLock）：任务调度并发控制，可重入锁支持等待和自动续期watchdog机制。\n3. 接口限流（Redisson RRat...",
+      "elapsed": 1.09,
+      "passed": true,
+      "hit_ratio": 0.83,
+      "hit_keywords": [
+        "Redis",
+        "缓存",
+        "session",
+        "分布式锁",
+        "限流"
+      ]
+    },
+    {
+      "id": 14,
+      "category": "检索引擎",
+      "question": "Elasticsearch倒排索引是什么？",
+      "keywords": [
+        "倒排索引",
+        "inverted index",
+        "词项",
+        "Posting List",
+        "ES"
+      ],
+      "required_any": [
+        "倒排",
+        "索引",
+        "Elasticsearch"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Elasticsearch倒排索引是：term -> posting list（包含该词的文档ID列表）。",
+      "elapsed": 1.02,
+      "passed": true,
+      "hit_ratio": 0.4,
+      "hit_keywords": [
+        "倒排索引",
+        "Posting List"
+      ]
+    },
+    {
+      "id": 15,
+      "category": "检索引擎",
+      "question": "Elasticsearch的全文检索和向量检索有什么区别？",
+      "keywords": [
+        "全文检索",
+        "向量检索",
+        "关键词",
+        "语义",
+        "BM25",
+        "embedding"
+      ],
+      "required_any": [
+        "全文",
+        "向量",
+        "BM25",
+        "语义"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Elasticsearch的全文检索和向量检索有以下区别：\n\n- **全文检索**：基于倒排索引（term -> posting list），使用BM25算法综合词频TF、逆文档频率IDF、文档长度计算相关性，实现关键词精确匹配。\n\n- **向量检索**：使用dense_vecto...",
+      "elapsed": 1.5,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "全文检索",
+        "向量检索",
+        "关键词",
+        "语义",
+        "BM25",
+        "embedding"
+      ]
+    },
+    {
+      "id": 16,
+      "category": "LLM与生成",
+      "question": "DeepSeek大模型有什么特点？",
+      "keywords": [
+        "DeepSeek",
+        "deepseek-chat",
+        "模型",
+        "推理",
+        "代码"
+      ],
+      "required_any": [
+        "DeepSeek",
+        "模型"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，DeepSeek是深度求索公司开发的大语言模型，本项目使用原生DeepSeek API，接入配置为Base URL=https://api.deepseek.com/v1，模型名称=deepseek-chat（通用对话模型支持Tool Calling），API Key通过配置文件注...",
+      "elapsed": 1.32,
+      "passed": true,
+      "hit_ratio": 0.6,
+      "hit_keywords": [
+        "DeepSeek",
+        "deepseek-chat",
+        "模型"
+      ]
+    },
+    {
+      "id": 17,
+      "category": "LLM与生成",
+      "question": "Prompt提示词工程有哪些技巧？",
+      "keywords": [
+        "Prompt",
+        "提示词",
+        "System",
+        "few-shot",
+        "角色",
+        "结构化"
+      ],
+      "required_any": [
+        "Prompt",
+        "提示词",
+        "System",
+        "角色"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Prompt提示词工程的技巧包括：\n\n1. **角色定义System Prompt**：设定AI为特定角色（如分布式任务调度系统运维分析助手），限制领域边界。\n2. **结构化输出约束**：强制输出包含【数据事实】【异常发现】【可能原因】【排查建议】四个部分，事实基于工具数据禁止编...",
+      "elapsed": 1.26,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "Prompt",
+        "提示词",
+        "System",
+        "few-shot",
+        "角色",
+        "结构化"
+      ]
+    },
+    {
+      "id": 18,
+      "category": "认证安全",
+      "question": "JWT Token认证的工作流程是怎样的？",
+      "keywords": [
+        "JWT",
+        "Token",
+        "认证",
+        "Bearer",
+        "签名",
+        "过期"
+      ],
+      "required_any": [
+        "JWT",
+        "Token",
+        "认证"
+      ],
+      "success": true,
+      "answer": "根据上下文，JWT Token认证的工作流程是：用户提交用户名密码验证后生成JWT（含用户ID、角色、过期时间），客户端后续请求携带Authorization Bearer token，网关验证签名和有效期，解析身份信息传给下游。",
+      "elapsed": 0.74,
+      "passed": true,
+      "hit_ratio": 1.0,
+      "hit_keywords": [
+        "JWT",
+        "Token",
+        "认证",
+        "Bearer",
+        "签名",
+        "过期"
+      ]
+    },
+    {
+      "id": 19,
+      "category": "熔断降级",
+      "question": "熔断器Circuit Breaker是怎么保护系统的？",
+      "keywords": [
+        "熔断",
+        "Circuit Breaker",
+        "降级",
+        "fallback",
+        "半开",
+        "打开",
+        "关闭"
+      ],
+      "required_any": [
+        "熔断",
+        "降级",
+        "Circuit"
+      ],
+      "success": true,
+      "answer": "根据上下文，熔断器模式通过以下方式保护系统：它防止级联故障，状态机有三种状态：CLOSED正常请求通过计数器记录失败率，OPEN失败率超阈值（50%）请求快速失败走fallback，HALF_OPEN等待后少量请求试探成功关闭失败继续打开。在本项目中，熔断器用于LLM API调用熔断（配置连续5次失...",
+      "elapsed": 1.24,
+      "passed": true,
+      "hit_ratio": 0.57,
+      "hit_keywords": [
+        "熔断",
+        "fallback",
+        "打开",
+        "关闭"
+      ]
+    },
+    {
+      "id": 20,
+      "category": "系统集成",
+      "question": "Spring Boot项目怎么集成MyBatis Plus？",
+      "keywords": [
+        "Spring Boot",
+        "MyBatis",
+        "MyBatis Plus",
+        "持久层",
+        "Mapper",
+        "注解"
+      ],
+      "required_any": [
+        "MyBatis",
+        "Spring Boot",
+        "Mapper"
+      ],
+      "success": true,
+      "answer": "根据提供的上下文，Spring Boot项目集成MyBatis Plus的步骤如下：\n\n1. 引入mybatis-plus-boot-starter依赖。\n2. 配置Druid数据源。\n3. 启动类加@MapperScan扫描Mapper包。\n4. 实体类继承BaseEntity（封装id crea...",
+      "elapsed": 1.28,
+      "passed": true,
+      "hit_ratio": 0.83,
+      "hit_keywords": [
+        "Spring Boot",
+        "MyBatis",
+        "MyBatis Plus",
+        "Mapper",
+        "注解"
+      ]
+    }
+  ]
+}

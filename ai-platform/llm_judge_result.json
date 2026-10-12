@@ -1,0 +1,7 @@
+{
+  "eval_cases": 20,
+  "avg_faithfulness": 0.99,
+  "avg_accuracy": 0.99,
+  "bad_cases_count": 0,
+  "bad_cases": []
+}
